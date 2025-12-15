@@ -1,2 +1,5 @@
-# AI_clips
-Project for AI made with python and clips
+# Projekt Sztuczna Inteligencja - CLIPS
+
+## Autorzy
+- Karol Niemczuk 160196
+- Patryk Krych 156601
