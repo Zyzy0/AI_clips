@@ -69,7 +69,10 @@
     (not (result))
     =>
     (retract ?q)
-    (assert (question-to-display (question "questionable-morals") (options "yes" "no")))
+    (assert (question-to-display
+        (question "questionable-morals")
+        (options "yes" "no")
+    ))
 )
 
 
@@ -402,6 +405,172 @@
     (retract ?q)
     (assert (result(result "Mad Men")))
 )
+
+(defrule questionable-morals-no
+    ?q <- (question-to-display (question "questionable-morals"))
+    (user-answer (question "questionable-morals") (answer "no"))
+    (not (result))
+    =>
+    (retract ?q)
+    (assert (question-to-display
+        (question "strong-female-characters")
+        (options "yes" "no")
+    ))
+)
+
+(defrule strong-female-characters-yes
+    ?q <- (question-to-display (question "strong-female-characters"))
+    (user-answer (question "strong-female-characters") (answer "yes"))
+    (not (result))
+    =>
+    (retract ?q)
+    (assert (question-to-display
+        (question "drugs")
+        (options "yes" "no")
+    ))
+)
+
+(defrule drugs-yes
+    ?q <- (question-to-display (question "drugs"))
+    (user-answer (question "drugs") (answer "yes"))
+    (not (result))
+    =>
+    (retract ?q)
+    (assert (result(result "Weeds")))
+)
+
+(defrule drugs-no
+    ?q <- (question-to-display (question "drugs"))
+    (user-answer (question "drugs") (answer "no"))
+    (not (result))
+    =>
+    (retract ?q)
+    (assert (question-to-display
+        (question "tina-amy")
+        (options "tina" "amy")
+    ))
+)
+
+(defrule tina
+    ?q <- (question-to-display (question "tina-amy"))
+    (user-answer (question "tina-amy") (answer "tina"))
+    (not (result))
+    =>
+    (retract ?q)
+    assert (result(result "30 Rock")))
+)
+
+(defrule amy
+    ?q <- (question-to-display (question "tina-amy"))
+    (user-answer (question "tina-amy") (answer "amy"))
+    (not (result))
+    =>
+    (retract ?q)
+    assert (result(result "Parks & Recreation")))
+)
+
+(defrule strong-female-characters-no
+    ?q <- (question-to-display (question "strong-female-characters"))
+    (user-answer (question "strong-female-characters") (answer "no"))
+    (not (result))
+    =>
+    (retract ?q)
+    (assert (question-to-display
+        (question "work-place-humor")
+        (options "yes" "no")
+    ))
+)
+
+(defrule work-place-humor-no
+    ?q <- (question-to-display (question "work-place-humor"))
+    (user-answer (question "work-place-humor") (answer "no"))
+    (not (result))
+    =>
+    (retract ?q)
+    (assert (question-to-display
+        (question "james-franco-seth-rogen")
+        (options "yes" "no")
+    ))
+)
+
+(defrule james-franco-seth-rogen-no
+    ?q <- (question-to-display (question "james-franco-seth-rogen"))
+    (user-answer (question "james-franco-seth-rogen") (answer "no"))
+    (not (result))
+    =>
+    (retract ?q)
+    (assert (question-to-display
+        (question "bar-cafe")
+        (options "bar" "cafe")
+    ))
+)
+
+(defrule bar
+    ?q <- (question-to-display (question "bar-cafe"))
+    (user-answer (question "bar-cafe") (answer "bar"))
+    (not (result))
+    =>
+    (retract ?q)
+    assert (result(result "How I Met Your Mother")))
+)
+
+(defrule cafe
+    ?q <- (question-to-display (question "bar-cafe"))
+    (user-answer (question "bar-cafe") (answer "cafe"))
+    (not (result))
+    =>
+    (retract ?q)
+    assert (result(result "Friends")))
+)
+
+(defrule james-franco-seth-rogen-yes
+    ?q <- (question-to-display (question "james-franco-seth-rogen"))
+    (user-answer (question "james-franco-seth-rogen") (answer "yes"))
+    (not (result))
+    =>
+    (retract ?q)
+    assert (result(result "Freaks & Geeks")))
+)
+
+(defrule work-place-humor-yes
+    ?q <- (question-to-display (question "work-place-humor"))
+    (user-answer (question "work-place-humor") (answer "yes"))
+    (not (result))
+    =>
+    (retract ?q)
+    assert (result(result "The Office")))
+)
+
+(defrule questionable-morals-yes
+    ?q <- (question-to-display (question "questionable-morals"))
+    (user-answer (question "questionable-morals") (answer "yes"))
+    (not (result))
+    =>
+    (retract ?q)
+    (assert (question-to-display
+        (question "friend-group-family")
+        (options "friend-group" "family")
+    ))
+)
+
+(defrule friend-group
+    ?q <- (question-to-display (question "friend-group-family"))
+    (user-answer (question "friend-group-family") (answer "friend-group"))
+    (not (result))
+    =>
+    (retract ?q)
+    assert (result(result "It's Always Sunny In Philadelphia")))
+)
+
+(defrule family
+    ?q <- (question-to-display (question "friend-group-family"))
+    (user-answer (question "friend-group-family") (answer "family"))
+    (not (result))
+    =>
+    (retract ?q)
+    assert (result(result "Arrested Development")))
+)
+
 
 
 
