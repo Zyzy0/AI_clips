@@ -5,8 +5,9 @@
 - Patryk Krych 156601
 
 ## Wymagania
-* Python
-* Clipspy
+* Python 3.12.0
+* Clipspy 1.0.6
+  (w pliku requirements.txt)
 
 ## Uruchomienie
 * Sklonowanie repozytorium lub pobranie plików
@@ -17,7 +18,8 @@ cd AI_clips
 * Przygotowanie środowiska
 ```
 # Windows
-TO DO
+python -m venv .venv
+.venv\Scripts\activate
 
 # Linux / MacOs
 python3 -m venv .venv
@@ -29,5 +31,5 @@ pip install -r requirements.txt
 ```
 * Uruchomienie programu
 ```
-TO DO
+python main.py
 ```
