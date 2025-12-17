@@ -1,580 +1,384 @@
-(deftemplate user-answer
-    (slot question (type STRING))
-    (slot answer (type STRING))
+(deftemplate question
+    (slot id (type STRING))
+    (multislot valid-answers)
 )
 
-(deftemplate question-to-display
-    (slot question (type STRING))
-    (multislot options (type STRING))
+(deftemplate answer
+    (slot id (type STRING))
+    (slot value (type STRING))
 )
 
-(deftemplate result
-    (slot result (type STRING))
+(deftemplate ui-state
+    (slot id (type STRING))
+    (multislot options)
+)
+
+(deftemplate recommendation
+    (slot value (type STRING))
+)
+
+(deftemplate need-to-ask
+    (slot id (type STRING))
+)
+
+(deffacts knowledge-base
+    (question (id "genre") (valid-answers "drama" "comedy" "a-little-of-both"))
+    (question (id "small-town-or-prison") (valid-answers "small-town" "prison"))
+    (question (id "scifi-supernatural") (valid-answers "yes" "no"))
+    (question (id "handle-gore") (valid-answers "yes" "no"))
+    (question (id "zombies") (valid-answers "yes" "no"))
+    (question (id "vampires") (valid-answers "yes" "no"))
+    (question (id "british-characters") (valid-answers "yes" "no"))
+    (question (id "politics") (valid-answers "yes" "no"))
+    (question (id "need-action") (valid-answers "yes" "no"))
+    (question (id "scandalious-romance") (valid-answers "yes" "no"))
+    (question (id "optimistic-cynical") (valid-answers "optimistic" "cynical"))
+    (question (id "crying") (valid-answers "yes" "no"))
+    (question (id "football") (valid-answers "yes" "no"))
+    (question (id "hospitals") (valid-answers "yes" "no"))
+    (question (id "crime-shows") (valid-answers "yes" "no"))
+    (question (id "criminals") (valid-answers "yes" "no"))
+    (question (id "forensics-psychology") (valid-answers "forensics" "psychology"))
+    (question (id "meth") (valid-answers "yes" "no"))
+    (question (id "questionable-morals") (valid-answers "yes" "no"))
+    (question (id "strong-female-characters") (valid-answers "yes" "no"))
+    (question (id "drugs") (valid-answers "yes" "no"))
+    (question (id "tina-amy") (valid-answers "tina" "amy"))
+    (question (id "work-place-humor") (valid-answers "yes" "no"))
+    (question (id "james-franco-seth-rogen") (valid-answers "yes" "no"))
+    (question (id "bar-cafe") (valid-answers "bar" "cafe"))
+    (question (id "friend-group-family") (valid-answers "friend-group" "family"))
 )
 
 (defrule start
-    (not (result))
-    (not (question-to-display))
+    (not (answer (id "genre")))
     =>
-    (assert (question-to-display
-        (question "genre")
-        (options "drama" "comedy" "a-little-of-both")
-    ))
+    (assert (need-to-ask (id "genre")))
 )
 
-(defrule genre-both
-    ?q <- (question-to-display (question "genre"))
-    (user-answer (question "genre") (answer "a-little-of-both"))
-    (not (result))
+(defrule flow-genre-both
+    (answer (id "genre") (value "a-little-of-both"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "small-town-or-prison")
-        (options "small-town" "prison")
-    ))
+    (assert (need-to-ask (id "small-town-or-prison")))
 )
 
-(defrule prison
-    ?q <- (question-to-display (question "small-town-or-prison"))
-    (user-answer (question "small-town-or-prison") (answer "prison"))
+(defrule res-orange
+    (answer (id "small-town-or-prison") (value "prison"))
     =>
-    (retract ?q)
-    (assert (result(result "Orange is the New Black")))
+    (assert (recommendation (value "Orange is the New Black")))
 )
 
-(defrule small-town
-    ?q <- (question-to-display (question "small-town-or-prison"))
-    (user-answer (question "small-town-or-prison") (answer "small-town"))
-    (not (result))
+(defrule res-gilmore
+    (answer (id "small-town-or-prison") (value "small-town"))
     =>
-    (retract ?q)
-    (assert (result(result "Gilmore Girls")))
+    (assert (recommendation (value "Gilmore Girls")))
 )
 
-(defrule genre-drama
-    ?q <- (question-to-display (question "genre"))
-    (user-answer (question "genre") (answer "drama"))
-    (not (result))
+(defrule flow-genre-drama
+    (answer (id "genre") (value "drama"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "scifi-supernatural")
-        (options "yes" "no")
-    ))
+    (assert (need-to-ask (id "scifi-supernatural")))
 )
 
-(defrule genre-comedy
-    ?q <- (question-to-display (question "genre"))
-    (user-answer (question "genre") (answer "comedy"))
-    (not (result))
+(defrule flow-scifi-yes
+    (answer (id "scifi-supernatural") (value "yes"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "questionable-morals")
-        (options "yes" "no")
-    ))
+    (assert (need-to-ask (id "handle-gore")))
 )
 
-
-(defrule scifi-yes
-    ?q <- (question-to-display (question "scifi-supernatural"))
-    (user-answer (question "scifi-supernatural") (answer "yes"))
-    (not (result))
+(defrule flow-gore-yes
+    (answer (id "handle-gore") (value "yes"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "handle-core")
-        (options "yes" "no")
-    ))
+    (assert (need-to-ask (id "zombies")))
 )
 
-(defrule handle-core-yes
-    ?q <- (question-to-display (question "handle-core"))
-    (user-answer (question "handle-core") (answer "yes"))
-    (not (result))
+(defrule res-walking-dead
+    (answer (id "zombies") (value "yes"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "zombies")
-        (options "yes" "no")
-    ))
+    (assert (recommendation (value "The Walking Dead")))
 )
 
-(defrule zombies-yes
-    ?q <- (question-to-display (question "zombies"))
-    (user-answer (question "zombies") (answer "yes"))
-    (not (result))
+(defrule flow-zombies-no
+    (answer (id "zombies") (value "no"))
     =>
-    (retract ?q)
-    (assert (result(result "The Walking Dead")))
+    (assert (need-to-ask (id "vampires")))
 )
 
-(defrule zombies-no
-    ?q <- (question-to-display (question "zombies"))
-    (user-answer (question "zombies") (answer "no"))
-    (not (result))
+(defrule res-vampire-diaries
+    (answer (id "vampires") (value "yes"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "vampires")
-        (options "yes" "no")
-    ))
+    (assert (recommendation (value "The Vampire Diaries")))
 )
 
-(defrule vampires-yes
-    ?q <- (question-to-display (question "vampires"))
-    (user-answer (question "vampires") (answer "yes"))
-    (not (result))
+(defrule res-supernatural
+    (answer (id "vampires") (value "no"))
     =>
-    (retract ?q)
-    (assert (result(result "The Vampire Diares")))
+    (assert (recommendation (value "Supernatural")))
 )
 
-(defrule vampires-no
-    ?q <- (question-to-display (question "vampires"))
-    (user-answer (question "vampires") (answer "no"))
-    (not (result))
+(defrule flow-gore-no
+    (answer (id "handle-gore") (value "no"))
     =>
-    (retract ?q)
-    (assert (result(result "Supernatural")))
+    (assert (need-to-ask (id "british-characters")))
 )
 
-(defrule handle-core-no
-    ?q <- (question-to-display (question "handle-core"))
-    (user-answer (question "handle-core") (answer "no"))
-    (not (result))
+(defrule res-lost
+    (answer (id "british-characters") (value "no"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "british-characters")
-        (options "yes" "no")
-    ))
+    (assert (recommendation (value "Lost")))
 )
 
-(defrule british-characters-no
-    ?q <- (question-to-display (question "british-characters"))
-    (user-answer (question "british-characters") (answer "no"))
-    (not (result))
+(defrule res-dr-who
+    (answer (id "british-characters") (value "yes"))
     =>
-    (retract ?q)
-    (assert (result(result "Lost")))
+    (assert (recommendation (value "Doctor Who")))
 )
 
-(defrule british-characters-yes
-    ?q <- (question-to-display (question "british-characters"))
-    (user-answer (question "british-characters") (answer "yes"))
-    (not (result))
+(defrule flow-scifi-no
+    (answer (id "scifi-supernatural") (value "no"))
     =>
-    (retract ?q)
-    (assert (result(result "Dr. Who")))
+    (assert (need-to-ask (id "politics")))
 )
 
-(defrule scifi-no
-    ?q <- (question-to-display (question "scifi-supernatural"))
-    (user-answer (question "scifi-supernatural") (answer "no"))
-    (not (result))
+(defrule flow-politics-yes
+    (answer (id "politics") (value "yes"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "politics")
-        (options "yes" "no")
-    ))
+    (assert (need-to-ask (id "need-action")))
 )
 
-(defrule politics-yes
-    ?q <- (question-to-display (question "politics"))
-    (user-answer (question "politics") (answer "yes"))
-    (not (result))
+(defrule res-24
+    (answer (id "need-action") (value "yes"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "need-action")
-        (options "yes" "no")
-    ))
+    (assert (recommendation (value "24")))
 )
 
-(defrule need-action-yes
-    ?q <- (question-to-display (question "need-action"))
-    (user-answer (question "need-action") (answer "yes"))
-    (not (result))
+(defrule flow-need-action-no
+    (answer (id "need-action") (value "no"))
     =>
-    (retract ?q)
-    (assert (result(result "24")))
+    (assert (need-to-ask (id "scandalious-romance")))
 )
 
-(defrule need-action-no
-    ?q <- (question-to-display (question "need-action"))
-    (user-answer (question "need-action") (answer "no"))
-    (not (result))
+(defrule res-scandal
+    (answer (id "scandalious-romance") (value "yes"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "scandalious-romance")
-        (options "yes" "no")
-    ))
+    (assert (recommendation (value "Scandal")))
 )
 
-(defrule scandalious-romance-yes
-    ?q <- (question-to-display (question "scandalious-romance"))
-    (user-answer (question "scandalious-romance") (answer "yes"))
-    (not (result))
+(defrule flow-scandal-no
+    (answer (id "scandalious-romance") (value "no"))
     =>
-    (retract ?q)
-    (assert (result(result "Scandal")))
+    (assert (need-to-ask (id "optimistic-cynical")))
 )
 
-(defrule scandalious-romance-no
-    ?q <- (question-to-display (question "scandalious-romance"))
-    (user-answer (question "scandalious-romance") (answer "no"))
-    (not (result))
+(defrule res-west-wing
+    (answer (id "optimistic-cynical") (value "optimistic"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "optimistic-cynical")
-        (options "optimistic" "cynical")
-    ))
+    (assert (recommendation (value "The West Wing")))
 )
 
-(defrule optimistic
-    ?q <- (question-to-display (question "optimistic-cynical"))
-    (user-answer (question "optimistic-cynical") (answer "optimistic"))
-    (not (result))
+(defrule res-house-of-cards
+    (answer (id "optimistic-cynical") (value "cynical"))
     =>
-    (retract ?q)
-    (assert (result(result "The West Wing")))
+    (assert (recommendation (value "House of Cards")))
 )
 
-(defrule cynical
-    ?q <- (question-to-display (question "optimistic-cynical"))
-    (user-answer (question "optimistic-cynical") (answer "cynical"))
-    (not (result))
+(defrule flow-politics-no
+    (answer (id "politics") (value "no"))
     =>
-    (retract ?q)
-    (assert (result(result "House Of Cards")))
+    (assert (need-to-ask (id "crying")))
 )
 
-(defrule politics-no
-    ?q <- (question-to-display (question "politics"))
-    (user-answer (question "politics") (answer "no"))
-    (not (result))
+(defrule flow-crying-yes
+    (answer (id "crying") (value "yes"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "crying")
-        (options "yes" "no")
-    ))
+    (assert (need-to-ask (id "football")))
 )
 
-(defrule crying-yes
-    ?q <- (question-to-display (question "crying"))
-    (user-answer (question "crying") (answer "yes"))
-    (not (result))
+(defrule res-friday-night
+    (answer (id "football") (value "yes"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "football")
-        (options "yes" "no")
-    ))
+    (assert (recommendation (value "Friday Night Lights")))
 )
 
-(defrule football-yes
-    ?q <- (question-to-display (question "football"))
-    (user-answer (question "football") (answer "yes"))
-    (not (result))
+(defrule flow-football-no
+    (answer (id "football") (value "no"))
     =>
-    (retract ?q)
-    (assert (result(result "Friday Nigh Lights")))
+    (assert (need-to-ask (id "hospitals")))
 )
 
-(defrule football-no
-    ?q <- (question-to-display (question "football"))
-    (user-answer (question "football") (answer "no"))
-    (not (result))
+(defrule res-parenthood
+    (answer (id "hospitals") (value "no"))
     =>
-    (assert (question-to-display
-        (question "hospitals")
-        (options "yes" "no")
-    ))
+    (assert (recommendation (value "Parenthood")))
 )
 
-(defrule hospitals-no
-    ?q <- (question-to-display (question "hospitals"))
-    (user-answer (question "hospitals") (answer "no"))
-    (not (result))
+(defrule res-greys
+    (answer (id "hospitals") (value "yes"))
     =>
-    (assert (result(result "Parent-Hood")))
+    (assert (recommendation (value "Greys Anatomy")))
 )
 
-(defrule hospitals-yes
-    ?q <- (question-to-display (question "hospitals"))
-    (user-answer (question "hospitals") (answer "yes"))
-    (not (result))
+(defrule flow-crying-no
+    (answer (id "crying") (value "no"))
     =>
-    (assert (result(result "Grey's Anatomy")))
+    (assert (need-to-ask (id "crime-shows")))
 )
 
-(defrule crying-no
-    ?q <- (question-to-display (question "crying"))
-    (user-answer (question "crying") (answer "no"))
-    (not (result))
+(defrule flow-crime-yes
+    (answer (id "crime-shows") (value "yes"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "crime-shows")
-        (options "yes" "no")
-    ))
+    (assert (need-to-ask (id "criminals")))
 )
 
-(defrule crime-shows-yes
-    ?q <- (question-to-display (question "crime-shows"))
-    (user-answer (question "crime-shows") (answer "yes"))
-    (not (result))
+(defrule res-dexter
+    (answer (id "criminals") (value "yes"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "criminals")
-        (options "yes" "no")
-    ))
+    (assert (recommendation (value "Dexter")))
 )
 
-(defrule criminals-yes
-    ?q <- (question-to-display (question "criminals"))
-    (user-answer (question "criminals") (answer "yes"))
-    (not (result))
+(defrule flow-criminals-no
+    (answer (id "criminals") (value "no"))
     =>
-    (retract ?q)
-    (assert (result(result "Dexter")))
+    (assert (need-to-ask (id "forensics-psychology")))
 )
 
-(defrule criminals-no
-    ?q <- (question-to-display (question "criminals"))
-    (user-answer (question "criminals") (answer "no"))
-    (not (result))
+(defrule res-csi
+    (answer (id "forensics-psychology") (value "forensics"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "fantastic-psychology")
-        (options "fantastic" "psychology")
-    ))
+    (assert (recommendation (value "CSI Miami")))
 )
 
-(defrule fantastic
-    ?q <- (question-to-display (question "fantastic-psychology"))
-    (user-answer (question "fantastic-psychology") (answer "fantastic"))
-    (not (result))
+(defrule res-criminal-minds
+    (answer (id "forensics-psychology") (value "psychology"))
     =>
-    (retract ?q)
-    (assert (result(result "CSI: Miami")))
+    (assert (recommendation (value "Criminal Minds")))
 )
 
-(defrule psychology
-    ?q <- (question-to-display (question "fantastic-psychology"))
-    (user-answer (question "fantastic-psychology") (answer "psychology"))
-    (not (result))
+(defrule flow-crime-no
+    (answer (id "crime-shows") (value "no"))
     =>
-    (retract ?q)
-    (assert (result(result "Criminal Minds")))
+    (assert (need-to-ask (id "meth")))
 )
 
-(defrule crime-shows-no
-    ?q <- (question-to-display (question "crime-shows"))
-    (user-answer (question "crime-shows") (answer "no"))
-    (not (result))
+(defrule res-breaking-bad
+    (answer (id "meth") (value "yes"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "meth")
-        (options "yes" "no")
-    ))
+    (assert (recommendation (value "Breaking Bad")))
 )
 
-(defrule meth-yes
-    ?q <- (question-to-display (question "meth"))
-    (user-answer (question "meth") (answer "yes"))
-    (not (result))
+(defrule res-mad-men
+    (answer (id "meth") (value "no"))
     =>
-    (retract ?q)
-    (assert (result(result "Breaking Bed")))
+    (assert (recommendation (value "Mad Men")))
 )
 
-(defrule meth-no
-    ?q <- (question-to-display (question "meth"))
-    (user-answer (question "meth") (answer "no"))
-    (not (result))
+(defrule flow-genre-comedy
+    (answer (id "genre") (value "comedy"))
     =>
-    (retract ?q)
-    (assert (result(result "Mad Men")))
+    (assert (need-to-ask (id "questionable-morals")))
 )
 
-(defrule questionable-morals-no
-    ?q <- (question-to-display (question "questionable-morals"))
-    (user-answer (question "questionable-morals") (answer "no"))
-    (not (result))
+(defrule flow-morals-no
+    (answer (id "questionable-morals") (value "no"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "strong-female-characters")
-        (options "yes" "no")
-    ))
+    (assert (need-to-ask (id "strong-female-characters")))
 )
 
-(defrule strong-female-characters-yes
-    ?q <- (question-to-display (question "strong-female-characters"))
-    (user-answer (question "strong-female-characters") (answer "yes"))
-    (not (result))
+(defrule flow-female-yes
+    (answer (id "strong-female-characters") (value "yes"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "drugs")
-        (options "yes" "no")
-    ))
+    (assert (need-to-ask (id "drugs")))
 )
 
-(defrule drugs-yes
-    ?q <- (question-to-display (question "drugs"))
-    (user-answer (question "drugs") (answer "yes"))
-    (not (result))
+(defrule res-weeds
+    (answer (id "drugs") (value "yes"))
     =>
-    (retract ?q)
-    (assert (result(result "Weeds")))
+    (assert (recommendation (value "Weeds")))
 )
 
-(defrule drugs-no
-    ?q <- (question-to-display (question "drugs"))
-    (user-answer (question "drugs") (answer "no"))
-    (not (result))
+(defrule flow-drugs-no
+    (answer (id "drugs") (value "no"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "tina-amy")
-        (options "tina" "amy")
-    ))
+    (assert (need-to-ask (id "tina-amy")))
 )
 
-(defrule tina
-    ?q <- (question-to-display (question "tina-amy"))
-    (user-answer (question "tina-amy") (answer "tina"))
-    (not (result))
+(defrule res-30-rock
+    (answer (id "tina-amy") (value "tina"))
     =>
-    (retract ?q)
-    assert (result(result "30 Rock")))
+    (assert (recommendation (value "30 Rock")))
 )
 
-(defrule amy
-    ?q <- (question-to-display (question "tina-amy"))
-    (user-answer (question "tina-amy") (answer "amy"))
-    (not (result))
+(defrule res-parks-rec
+    (answer (id "tina-amy") (value "amy"))
     =>
-    (retract ?q)
-    assert (result(result "Parks & Recreation")))
+    (assert (recommendation (value "Parks and Recreation")))
 )
 
-(defrule strong-female-characters-no
-    ?q <- (question-to-display (question "strong-female-characters"))
-    (user-answer (question "strong-female-characters") (answer "no"))
-    (not (result))
+(defrule flow-female-no
+    (answer (id "strong-female-characters") (value "no"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "work-place-humor")
-        (options "yes" "no")
-    ))
+    (assert (need-to-ask (id "work-place-humor")))
 )
 
-(defrule work-place-humor-no
-    ?q <- (question-to-display (question "work-place-humor"))
-    (user-answer (question "work-place-humor") (answer "no"))
-    (not (result))
+(defrule res-office
+    (answer (id "work-place-humor") (value "yes"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "james-franco-seth-rogen")
-        (options "yes" "no")
-    ))
+    (assert (recommendation (value "The Office")))
 )
 
-(defrule james-franco-seth-rogen-no
-    ?q <- (question-to-display (question "james-franco-seth-rogen"))
-    (user-answer (question "james-franco-seth-rogen") (answer "no"))
-    (not (result))
+(defrule flow-work-no
+    (answer (id "work-place-humor") (value "no"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "bar-cafe")
-        (options "bar" "cafe")
-    ))
+    (assert (need-to-ask (id "james-franco-seth-rogen")))
 )
 
-(defrule bar
-    ?q <- (question-to-display (question "bar-cafe"))
-    (user-answer (question "bar-cafe") (answer "bar"))
-    (not (result))
+(defrule res-freaks
+    (answer (id "james-franco-seth-rogen") (value "yes"))
     =>
-    (retract ?q)
-    assert (result(result "How I Met Your Mother")))
+    (assert (recommendation (value "Freaks and Geeks")))
 )
 
-(defrule cafe
-    ?q <- (question-to-display (question "bar-cafe"))
-    (user-answer (question "bar-cafe") (answer "cafe"))
-    (not (result))
+(defrule flow-franco-no
+    (answer (id "james-franco-seth-rogen") (value "no"))
     =>
-    (retract ?q)
-    assert (result(result "Friends")))
+    (assert (need-to-ask (id "bar-cafe")))
 )
 
-(defrule james-franco-seth-rogen-yes
-    ?q <- (question-to-display (question "james-franco-seth-rogen"))
-    (user-answer (question "james-franco-seth-rogen") (answer "yes"))
-    (not (result))
+(defrule res-himym
+    (answer (id "bar-cafe") (value "bar"))
     =>
-    (retract ?q)
-    assert (result(result "Freaks & Geeks")))
+    (assert (recommendation (value "How I Met Your Mother")))
 )
 
-(defrule work-place-humor-yes
-    ?q <- (question-to-display (question "work-place-humor"))
-    (user-answer (question "work-place-humor") (answer "yes"))
-    (not (result))
+(defrule res-friends
+    (answer (id "bar-cafe") (value "cafe"))
     =>
-    (retract ?q)
-    assert (result(result "The Office")))
+    (assert (recommendation (value "Friends")))
 )
 
-(defrule questionable-morals-yes
-    ?q <- (question-to-display (question "questionable-morals"))
-    (user-answer (question "questionable-morals") (answer "yes"))
-    (not (result))
+(defrule flow-morals-yes
+    (answer (id "questionable-morals") (value "yes"))
     =>
-    (retract ?q)
-    (assert (question-to-display
-        (question "friend-group-family")
-        (options "friend-group" "family")
-    ))
+    (assert (need-to-ask (id "friend-group-family")))
 )
 
-(defrule friend-group
-    ?q <- (question-to-display (question "friend-group-family"))
-    (user-answer (question "friend-group-family") (answer "friend-group"))
-    (not (result))
+(defrule res-sunny
+    (answer (id "friend-group-family") (value "friend-group"))
     =>
-    (retract ?q)
-    assert (result(result "It's Always Sunny In Philadelphia")))
+    (assert (recommendation (value "Its Always Sunny in Philadelphia")))
 )
 
-(defrule family
-    ?q <- (question-to-display (question "friend-group-family"))
-    (user-answer (question "friend-group-family") (answer "family"))
-    (not (result))
+(defrule res-arrested
+    (answer (id "friend-group-family") (value "family"))
     =>
-    (retract ?q)
-    assert (result(result "Arrested Development")))
+    (assert (recommendation (value "Arrested Development")))
 )
 
-
-
-
-
-
-
-
+(defrule generate-ui-question
+    ?req <- (need-to-ask (id ?id))
+    (question (id ?id) (valid-answers $?options))
+    (not (ui-state))
+    =>
+    (retract ?req)
+    (assert (ui-state (id ?id) (options $?options)))
+)
