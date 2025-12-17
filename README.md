@@ -25,11 +25,11 @@ python -m venv .venv
 python3 -m venv .venv
 source .venv/bin/activate
 ```
-* Pobranie wymaganych bibliotek
+* Pobranie wymaganych bibliotek w (.venv)
 ```
 pip install -r requirements.txt
 ```
-* Uruchomienie programu
+* Uruchomienie programu w (.venv)
 ```
 python main.py
 ```
